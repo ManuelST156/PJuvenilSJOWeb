@@ -1,0 +1,29 @@
+{
+  "name": "pascuaweb",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.41.1",
+    "dotenv": "^16.4.5",
+    "primeflex": "^3.3.1",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.50.0",
+    "progress-bar": "^0.1.1",
+    "supabase": "^1.151.1",
+    "uid": "^2.0.2",
+    "vue": "^3.4.21",
+    "vue-image-crop-upload": "^3.0.3",
+    "vue-router": "^4.3.0",
+    "vue-supabase": "^2.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.1.6"
+  }
+}
