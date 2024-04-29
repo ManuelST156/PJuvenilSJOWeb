@@ -1,14 +1,14 @@
 <template>
   <div class="relative">
     <Button
-      label="LogOut"
+      label="Cerrar Sesion"
       icon="pi pi-user"
       v-if="visibleLogoutBtn"
       @click="cerrarSesion"
-      class="absolute top-0 right-0 mt-2 mr-4"
+      class="loginButton"
     />
     <Button
-      label="Login"
+      label="Iniciar Sesion"
       v-if="visibleLoginBtn"
       icon="pi pi-user"
       @click="visible = true"
@@ -54,8 +54,8 @@
             />
           </svg>
           <div class="inline-flex flex-column gap-2">
-            <label for="username" class="text-primary-50 font-semibold"
-              >Username</label
+            <label for="Email" class="text-primary-50 font-semibold"
+              >Email</label
             >
             <InputText
               v-model="userName"
@@ -64,7 +64,7 @@
           </div>
           <div class="inline-flex flex-column gap-2">
             <label for="password" class="text-primary-50 font-semibold"
-              >Password</label
+              >Contraseña</label
             >
             <InputText
               v-model="password"
@@ -74,13 +74,13 @@
           </div>
           <div class="flex align-items-center gap-3">
             <Button
-              label="Cancel"
+              label="Cancelar"
               @click="closeCallback"
               text
               class="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
             ></Button>
             <Button
-              label="Sign-In"
+              label="Iniciar Sesion"
               @click="iniciarSesion"
               text
               class="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
@@ -97,16 +97,16 @@
         <template v-if="item.component">
           <component :is="items[2].component" v-bind="items[0].props" />
         </template>
-        <template v-else>
-          <router-link v-if="item.route" :to="item.route" custom>
-            <a
+        <template v-else >
+          <router-link v-if="item.route" :to="item.route" custom >
+            <a  
               v-ripple
               :href="item.route"
               v-bind="props.action"
               v-show="item.showLogin"
             >
               <span :class="item.icon"></span>
-              <span class="ml-2">{{ item.label }}</span>
+              <span class="ml-2" >{{ item.label }}</span>
             </a>
           </router-link>
         </template>
@@ -115,9 +115,64 @@
   </div>
 </template>
 
+<style>
+.menubar{
+  background-color:#D94A4A;
+  border: none;
+  border-radius: 0;
+
+}
+
+
+@media screen and  (max-width: 768px) {
+  /* Styles for medium screens */
+  a {
+    color: brown;
+    font-weight: bold;
+  }
+
+  a:hover {
+    color: #05A6A6;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  /* Styles for large screens */
+  a{
+  color: #ffffff ;
+  font-weight: bold;
+  }
+
+  a:hover{
+    color: brown;
+  }
+
+}
+
+
+.loginButton{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 7px; 
+    margin-right: 14px; 
+
+    background-color:#05A6A6 ;
+    border:none;
+}
+
+.loginButton:hover{
+  background-color:#105dcf ;
+}
+
+</style>
+
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -147,6 +202,18 @@ const items = ref([
     label: "Agregar Videos",
     icon: "pi pi-palette",
     route: "/AgregarVideos",
+    showLogin: computed(() => visibleLogoutBtn.value),
+  },
+  {
+    label: "Agregar Actividad",
+    icon: "pi pi-palette",
+    route: "/AgregarActividad",
+    showLogin: computed(() => visibleLogoutBtn.value),
+  },
+  {
+    label: "Agregar Grupo",
+    icon: "pi pi-palette",
+    route: "/AgregarGrupo",
     showLogin: computed(() => visibleLogoutBtn.value),
   },
 ]);
@@ -182,6 +249,6 @@ const cerrarSesion = () => {
   visibleLoginBtn.value = true;
   visibleLogoutBtn.value = false;
   localStorage.removeItem("token");
-  router.push({ name: "home" });
+  router.push({name: 'inicio'});
 };
 </script>

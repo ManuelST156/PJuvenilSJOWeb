@@ -89,6 +89,12 @@
           sortable
           style="min-width: 10rem"
         ></Column>
+        <Column
+          field="NombreActividad"
+          header="Actividad"
+          sortable
+          style="min-width: 10rem"
+        ></Column>
 
         <Column header="Imagenes">
           <template #body="slotProps">
@@ -169,6 +175,25 @@
         />
         <small class="p-error" v-if="submitted && !image.Año"
           >Año es requerido.</small
+        >
+      </div>
+
+      <div class="field">
+        <label for="idActividad" class="mb-3">Tipo Actividad</label>
+        <Dropdown
+          id="idActividad"
+          v-model="image.idActividad"
+          :options="Actividad"
+          optionValue="idActividad"
+          optionLabel="NombreActividad"
+          placeholder="Seleccionar Tipo de Actividad"
+          requited="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !image.idActividad }"
+        >
+        </Dropdown
+        ><small class="p-error" v-if="submitted && !image.idActividad"
+          >Actividad es requerido.</small
         >
       </div>
 
@@ -316,20 +341,10 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-onMounted(async () => {
-  if (localStorage.getItem("token") == null) {
-    router.push({ name: "home" });
-  }
-
-  const dataImages = await supabase.from("Imagenes").select("*");
-
-  images.value = dataImages.data;
-  console.log(images.value);
-});
-
 const toast = useToast();
 const dt = ref();
 const images = ref();
+const Actividad=ref();
 const imageDialog = ref(false);
 const deleteImageDialog = ref(false);
 const deleteImagesDialog = ref(false);
@@ -342,6 +357,54 @@ const filters = ref({
 });
 const submitted = ref(false);
 const loading = ref(false);
+
+onMounted(async () => {
+  if (localStorage.getItem("token") == null) {
+    router.push({ name: "inicio" }).catch(err => {
+      console.error("Error while redirecting:", err);
+    });;
+  }
+
+  const dataImages = await supabase.from("Imagenes").select("*");
+
+  images.value = dataImages.data;
+  console.log(images.value);
+
+
+  const dataActividad= await supabase
+  .from("Actividad")
+  .select("*");
+
+  console.log(dataActividad);
+  Actividad.value=dataActividad.data;
+  console.log(Actividad.value[0].NombreActividad);
+
+  unionData();
+
+});
+
+
+
+const unionData=()=>{
+let i=0;
+
+  
+  images.value.forEach(imagen => {
+
+    Actividad.value.forEach(actividad=>{
+
+      if(imagen.idActividad==actividad.idActividad)
+      {
+        imagen.NombreActividad= actividad.NombreActividad;
+      }
+
+    })
+
+  });
+  console.log(images.value);
+  i++;
+};
+
 
 const openNew = () => {
   image.value = {};
@@ -357,6 +420,7 @@ const fileUpload = ref(null);
 /* const imagenCargada= ref(null); */
 
 const imagenes = [];
+
 
 const saveMuchImages = async () => {
   loading.value = true;
@@ -375,6 +439,7 @@ const saveMuchImages = async () => {
 
     image.value.Nombre = nombreImagen;
     image.value.CodigoImagen = nombreImagen;
+    image.value.idActividad=7;
 
     const today = new Date();
     image.value.Año = today.getFullYear();
@@ -391,7 +456,10 @@ const saveMuchImages = async () => {
   images.value = dataImages.data;
 
   imagesDialog.value = false;
+
+  unionData();
 };
+
 
 const saveImage = async () => {
   submitted.value = true;
@@ -443,12 +511,12 @@ const saveImage = async () => {
         image.value.CodigoImagen = nombreImagen;
         image.value.ImageURL = urlDescargar.data.publicUrl;
       }
-
+      console.log(image.value);
       const subirImagen = await supabase
         .from("Imagenes")
         .insert([image.value])
         .select();
-
+      
       loading.value = false;
 
       toast.add({
@@ -464,6 +532,7 @@ const saveImage = async () => {
       const dataImages = await supabase.from("Imagenes").select("*");
 
       images.value = dataImages.data;
+      unionData();
     } catch (error) {
       toast.add({
         severity: "error",
@@ -484,7 +553,8 @@ const saveImage = async () => {
           life: 3000,
         });
         return;
-      } else if (image.value.Año == undefined) {
+      } 
+      else if (image.value.Año == undefined) {
         toast.add({
           severity: "error",
           summary: "El campo Año no puede estar vacio",
@@ -512,13 +582,22 @@ const saveImage = async () => {
         }
       }
 
+      console.log(image.value);
       const { data, error } = await supabase
-        .from("Imagenes")
-        .upsert(image.value)
-        .select();
+      .from('Imagenes')
+      .upsert(image.value)
+      .select();
+
+
       loading.value = false;
       images.value[findIndexById(image.value.id)] = image.value;
       console.log(images.value);
+
+      /* const dataImages = await supabase.from("Imagenes").select("*");
+
+      images.value = dataImages.data; */
+      
+      unionData();
 
       toast.add({
         severity: "success",
@@ -530,6 +609,8 @@ const saveImage = async () => {
       editState.value = false;
       imageDialog.value = false;
       image.value = {};
+
+
     } catch (error) {
       toast.add({
         severity: "error",
@@ -543,6 +624,7 @@ const saveImage = async () => {
 
 const editProduct = (prod) => {
   image.value = { ...prod };
+  delete image.value.NombreActividad;
   editState.value = true;
   imageDialog.value = true;
 };

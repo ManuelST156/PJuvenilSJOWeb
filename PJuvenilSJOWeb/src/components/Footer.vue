@@ -8,7 +8,7 @@
 .footer {
   position: relative;
   bottom: 0;
-  background-color: aqua;
+  background-color: #5e5d5c;
   width: 100%;
 
   height: 30px;

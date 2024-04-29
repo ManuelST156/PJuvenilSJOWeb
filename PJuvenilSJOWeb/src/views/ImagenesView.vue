@@ -115,7 +115,9 @@ import { uid } from "uid";
 
         
 } */
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -124,181 +126,50 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 console.log(supabase);
 
 const images = ref([]);
-
+const actividadPage=ref();
+const infoType=ref();
 onMounted(async () => {
-  const dataImages = await supabase.from("Imagenes").select("*");
+  
 
-  images.value = dataImages.data;
-  console.log(images.value);
+  const dataImages = await supabase.from("imagenact").select("*");
 
-  const años = await supabase.from("byyear").select("Año");
+  actividadPage.value=(router.currentRoute.value.params.infoType);
+  
+  console.log(actividadPage.value);
+  const años = await supabase.from("byyear").select("*");
 
   const GetañoMaximo = await supabase.from("bigyear").select("max");
 
-  añoMaximo.value = GetañoMaximo.data[0].max;
+  
 
-  for (let i = 0; i <= años.data.length; i++) {
-    tabs.value.push(años.data[i].Año);
-    console.log(tabs.value);
+  for(let i=0; i<dataImages.data.length; i++){
+    
+    if(dataImages.data[i].NombreActividad==actividadPage.value)
+    {
+      console.log(100);
+      images.value.push(dataImages.data[i]);
+      console.log(images.value);
+      
+    }
+
   }
+
+  añoMaximo.value = images.value[0].Año;
+  
+  for (let i = 0; i <= años.data.length; i++) {
+
+    if(años.data[i].NombreActividad==actividadPage.value)
+    {
+      tabs.value.push(años.data[i].Año);
+      console.log(tabs.value);
+    }
+  }
+
+  
+
 });
 
 const añoMaximo = ref();
-
-const imagesa = ref([
-  {
-    itemImageSrc:
-      "https://www.egames.news/__export/1660158141768/sites/debate/img/2022/08/10/ultra_instinct_1.jpg_554688468.jpg",
-    thumbnailImageSrc:
-      "https://www.egames.news/__export/1660158141768/sites/debate/img/2022/08/10/ultra_instinct_1.jpg_554688468.jpg",
-    alt: "Description for Image 1",
-    title: "Title 1",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://media.vandalsports.com/i/640x360/9-2023/2023981732_1.jpg",
-    thumbnailImageSrc: "https://i.ibb.co/ZHt79SG/2023981732-1-2.jpg",
-    alt: "Description for Image 2",
-    title: "Title 2",
-    año: 2022,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria3.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria3s.jpg",
-    alt: "Description for Image 3",
-    title: "Title 3",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria4.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria4s.jpg",
-    alt: "Description for Image 4",
-    title: "Title 4",
-    año: 2023,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria5.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria5s.jpg",
-    alt: "Description for Image 5",
-    title: "Title 5",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria6.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria6s.jpg",
-    alt: "Description for Image 6",
-    title: "Title 6",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria7.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria7s.jpg",
-    alt: "Description for Image 7",
-    title: "Title 7",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria8.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria8s.jpg",
-    alt: "Description for Image 8",
-    title: "Title 8",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria9.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria9s.jpg",
-    alt: "Description for Image 9",
-    title: "Title 9",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria10.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria10s.jpg",
-    alt: "Description for Image 10",
-    title: "Title 10",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria11.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria11s.jpg",
-    alt: "Description for Image 11",
-    title: "Title 11",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria12.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria12s.jpg",
-    alt: "Description for Image 12",
-    title: "Title 12",
-    año: 2022,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria13.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria13s.jpg",
-    alt: "Description for Image 13",
-    title: "Title 13",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria14.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria14s.jpg",
-    alt: "Description for Image 14",
-    title: "Title 14",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria12.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria12s.jpg",
-    alt: "Description for Image 12",
-    title: "Title 1",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria13.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria13s.jpg",
-    alt: "Description for Image 13",
-    title: "Title 2",
-    año: 2024,
-  },
-  {
-    itemImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria14.jpg",
-    thumbnailImageSrc:
-      "https://primefaces.org/cdn/primevue/images/galleria/galleria14s.jpg",
-    alt: "Description for Image 14",
-    title: "Title 3",
-    año: 0,
-  },
-]);
 
 const activeIndex = ref(0);
 
